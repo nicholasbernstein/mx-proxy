@@ -1,9 +1,10 @@
 #!/bin/bash
 
 PROJECT="perfect-lantern-344315"
-ZONE="northamerica-south1-c"
+ZONE="northamerica-south1-c" # mexico
 SIZE="e2-small"
 BROWSERCMD="chromium --proxy-server=localhost:3128"
+QRCMD="qrencode https://github.com/nicholasbernstein/mx-proxy -t UTF8 2>*1"
 
 start() {
 gcloud compute instances create mx-vm1 \
@@ -48,6 +49,21 @@ browse() {
 
 }
 
+usage() {
+
+        echo "$0 (start|stop|browse)"
+        echo -e "documentation: https://github.com/nicholasbernstein/mx-proxy \n\n"
+        $QRCMD
+}
+if (! $(which gcloud 1>/dev/null) ) ; then
+  echo -e "Google Cloud SDK must be installed and you need a working google cloud account\n https://cloud.google.com/sdk/docs/install"
+  exit 1
+fi
+
+if [ ! -e $1 ] ; then
+  usage
+fi
+
 case "$1" in
     start)
         start
@@ -59,7 +75,7 @@ case "$1" in
         browse
         ;;
     *)
-        echo "$0 (start|stop|browse)"
+        usage
         ;;
 esac
 
